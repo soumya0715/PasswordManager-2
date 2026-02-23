@@ -1,5 +1,6 @@
 package com.passwordmanager.controller;
 
+import com.passwordmanager.dto.request.UpdateSecurityQuestionsRequest;
 import com.passwordmanager.dto.response.ApiResponse;
 import com.passwordmanager.entity.SecurityQuestion;
 import com.passwordmanager.entity.User;
@@ -27,7 +28,7 @@ public class SecurityQuestionController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    @GetMapping
+    @GetMapping("/View")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getQuestions(Authentication auth) {
         List<SecurityQuestion> questions = securityQuestionService.getQuestions(getUser(auth));
         // Return only question text, not answers
@@ -37,10 +38,27 @@ public class SecurityQuestionController {
         return ResponseEntity.ok(ApiResponse.success(result, "Questions fetched"));
     }
 
-    @PostMapping
+    @PostMapping("/Add")
     public ResponseEntity<ApiResponse<Void>> saveQuestions(
             Authentication auth, @RequestBody List<SecurityQuestion> questions) {
         securityQuestionService.saveQuestions(getUser(auth), questions);
         return ResponseEntity.ok(ApiResponse.success(null, "Security questions saved"));
+    }
+    @PostMapping("/Update")
+    public ResponseEntity<ApiResponse<Void>> updateQuestions(
+            Authentication auth,
+            @RequestBody UpdateSecurityQuestionsRequest request) {
+
+        User user = getUser(auth);
+
+        securityQuestionService.updateAnswers(
+                user,
+                request.getPassword(),
+                request.getQuestions()
+        );
+
+        return ResponseEntity.ok(
+                ApiResponse.success(null, "Security answers updated successfully")
+        );
     }
 }

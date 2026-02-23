@@ -1,5 +1,6 @@
 package com.passwordmanager.service;
 
+import com.passwordmanager.dto.request.UpdateSecurityQuestionsRequest;
 import com.passwordmanager.entity.SecurityQuestion;
 import com.passwordmanager.entity.User;
 import com.passwordmanager.repository.SecurityQuestionRepository;
@@ -41,5 +42,35 @@ public class SecurityQuestionService {
             }
         }
         return correct >= 3;
+    }
+
+    public void updateAnswers(User user,
+                              String password,
+                              List<UpdateSecurityQuestionsRequest.QuestionAnswerDTO> updates) {
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        List<SecurityQuestion> storedQuestions =
+                securityQuestionRepository.findByUser(user);
+
+        for (SecurityQuestion stored : storedQuestions) {
+
+            for (UpdateSecurityQuestionsRequest.QuestionAnswerDTO update : updates) {
+
+                if (stored.getId().equals(update.getQuestionId())) {
+
+                    stored.setAnswer(
+                            passwordEncoder.encode(
+                                    update.getAnswer().toLowerCase().trim()
+                            )
+                    );
+                }
+            }
+        }
+
+        // 4️⃣ Save updated answers
+        securityQuestionRepository.saveAll(storedQuestions);
     }
 }
