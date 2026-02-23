@@ -1,6 +1,8 @@
 package com.passwordmanager.controller;
 
 import com.passwordmanager.dto.PasswordDTO;
+import com.passwordmanager.dto.request.PasswordViewRequest;
+import com.passwordmanager.dto.response.ApiResponse;
 import com.passwordmanager.entity.User;
 import com.passwordmanager.repository.UserRepository;
 import com.passwordmanager.service.PasswordService;
@@ -41,13 +43,20 @@ public class PasswordController {
         return ResponseEntity.ok(passwords);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PasswordDTO> getPassword(@PathVariable Long id, Authentication auth) {
-        User user = getAuthenticatedUser(auth);
-        PasswordDTO password = passwordService.getPassword(id, user);
-        return ResponseEntity.ok(password);
-    }
+    @PostMapping("/{id}/view")
+    public ResponseEntity<ApiResponse<PasswordDTO>> viewPassword(
+            @PathVariable Long id,
+            @RequestBody PasswordViewRequest request,
+            Authentication auth) {
 
+        User user = getAuthenticatedUser(auth);
+
+        PasswordDTO dto = passwordService.viewPassword(id, user, request.getPassword());
+
+        return ResponseEntity.ok(
+                ApiResponse.success(dto, "Password verified")
+        );
+    }
     @PostMapping
     public ResponseEntity<PasswordDTO> createPassword(@Valid @RequestBody PasswordDTO dto, Authentication auth) {
         User user = getAuthenticatedUser(auth);

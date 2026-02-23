@@ -7,6 +7,7 @@ import com.passwordmanager.entity.User;
 import com.passwordmanager.repository.CategoryRepository;
 import com.passwordmanager.repository.PasswordRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class PasswordService {
 
     private final PasswordRepository passwordRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final CategoryRepository categoryRepository;
 
@@ -41,6 +44,18 @@ public class PasswordService {
         return convertToDTO(password);
     }
 
+    public PasswordDTO viewPassword(Long id, User user, String rawPassword) {
+
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        Password password = passwordRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Password not found"));
+
+        return convertToDTO(password);
+    }
+
     public PasswordDTO createPassword(PasswordDTO dto, User user) {
 
         Password password = new Password();
@@ -54,7 +69,6 @@ public class PasswordService {
         password.setIsFavorite(false);
         password.setStrengthScore(calculateStrength(dto.getPassword()));
 
-        // ✅ CATEGORY LOGIC
         if (dto.getCategoryId() != null) {
             Category category = categoryRepository.findByIdAndUser(dto.getCategoryId(), user)
                     .orElseThrow(() -> new RuntimeException("Category not found"));
