@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/generator")
+@RequestMapping("/Password-generator")
 @RequiredArgsConstructor
 public class PasswordGeneratorController {
 
