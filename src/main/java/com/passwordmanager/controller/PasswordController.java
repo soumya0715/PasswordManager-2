@@ -69,7 +69,7 @@ public class PasswordController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/favorite")
+    @PostMapping("/{id}/favourite")
     public ResponseEntity<PasswordDTO> toggleFavorite(@PathVariable Long id, Authentication auth) {
         User user = getAuthenticatedUser(auth);
         PasswordDTO password = passwordService.toggleFavorite(id, user);

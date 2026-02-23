@@ -101,7 +101,8 @@ public class PasswordService {
     }
 
     public List<PasswordDTO> searchPasswords(String keyword, User user) {
-        return passwordRepository.searchByTitle(user, keyword)
+
+        return passwordRepository.smartSearch(user, keyword)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

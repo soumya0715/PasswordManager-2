@@ -18,4 +18,17 @@ public interface PasswordRepository extends JpaRepository<Password, Long> {
     
     @Query("SELECT p FROM Password p WHERE p.user = :user AND p.title LIKE %:keyword%")
     List<Password> searchByTitle(@Param("user") User user, @Param("keyword") String keyword);
+
+    @Query("""
+SELECT p FROM Password p
+WHERE p.user = :user
+AND (
+    LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    OR LOWER(p.username) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    OR LOWER(p.url) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    OR LOWER(p.category.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+)
+""")
+    List<Password> smartSearch(@Param("user") User user,
+                               @Param("keyword") String keyword);
 }
