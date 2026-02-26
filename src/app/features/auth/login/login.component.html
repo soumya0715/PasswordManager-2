@@ -1,0 +1,44 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="logo-circle">🛡️</div>
+      <h1>Welcome Back</h1>
+      <p>Enter your master credentials to access the vault</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <div class="input-group">
+        <label>Email Address</label>
+        <div class="input-with-icon">
+          <input type="email" formControlName="email" placeholder="name@email.com">
+        </div>
+        <small class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']">
+          Please enter a valid email address.
+        </small>
+      </div>
+
+      <div class="input-group">
+        <label>Master Password</label>
+        <div class="input-with-icon">
+          <input type="password" formControlName="password" placeholder="••••••••">
+        </div>
+        <small class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']">
+          Password must be at least 7 characters.
+        </small>
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="loginForm.invalid || loading">
+        {{ loading ? 'Securing Connection...' : 'Access Vault' }}
+      </button>
+
+      <div class="auth-footer">
+        <p>Don't have an account? <a routerLink="/register">Register</a></p>
+        <a routerLink="/forgot-password" class="forgot-link">Forgot Master Password?</a>
+      </div>
+    </form>
+  </div>
+</div>

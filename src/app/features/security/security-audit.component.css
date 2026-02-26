@@ -1,0 +1,207 @@
+/* ==========================================
+   1. CORE LAYOUT
+   ========================================== */
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #020617;
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+}
+
+.content {
+  flex: 1;
+  margin-left: 260px;
+  padding: 40px 60px;
+}
+
+/* ==========================================
+   2. SIDEBAR STYLES (Dashboard Modern Look)
+   ========================================== */
+.sidebar {
+  width: 260px;
+  background: #0f172a;
+  border-right: 1px solid rgba(56, 189, 248, 0.1);
+  padding: 30px 20px;
+  position: fixed;
+  height: 100vh;
+  left: 0; top: 0; z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.nav-logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vault-text { color: #38bdf8; }
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  color: #94a3b8;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: 0.3s;
+  margin-bottom: 5px;
+}
+
+.nav-links a.active {
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+}
+
+/* Sidebar Logout Button Fix */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-logout {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+}
+
+/* ==========================================
+   3. AUDIT CARDS & NEON TEXT
+   ========================================== */
+.neon-text {
+  color: #22d3ee;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
+}
+
+.audit-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.audit-card {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.audit-card.critical {
+  background: rgba(248, 113, 113, 0.05);
+  border-color: rgba(248, 113, 113, 0.2);
+}
+
+.audit-card.healthy {
+  background: rgba(34, 211, 238, 0.05);
+  border-color: rgba(34, 211, 238, 0.2);
+}
+
+.alert-icon {
+  font-size: 40px;
+  background: rgba(15, 23, 42, 0.5);
+  min-width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+}
+
+/* ==========================================
+   4. MODAL & UNIFORM INPUTS
+   ========================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(10px);
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  z-index: 2000;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.modal-card.wide {
+  background: #0f172a;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  border-radius: 24px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 30px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.modal-body {
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 20px;
+}
+
+.question-row {
+  background: rgba(30, 41, 59, 0.5);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.control-select, .control-input {
+  width: 100%;
+  height: 48px;
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 0 16px;
+  border-radius: 10px;
+  color: #fff;
+  margin-top: 8px;
+}
+
+.btn-save {
+  background: #38bdf8;
+  color: #0f172a;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  cursor: pointer;
+}

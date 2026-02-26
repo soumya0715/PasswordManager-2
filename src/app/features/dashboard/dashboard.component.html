@@ -1,0 +1,66 @@
+<div class="dashboard-wrapper">
+  <nav class="sidebar">
+    <div class="nav-logo">
+      <span class="shield-icon">🛡️</span> REV<span class="vault-text">VAULT</span>
+    </div>
+    <div class="nav-links">
+      <a routerLink="/dashboard" routerLinkActive="active"><span class="icon">📊</span> Dashboard</a>
+      <a routerLink="/vault" routerLinkActive="active"><span class="icon">🔑</span> Access Vault</a>
+      <a routerLink="/audit" routerLinkActive="active"><span class="icon">🛡️</span> Security Audit</a>
+      <a routerLink="/profile" routerLinkActive="active"><span class="icon">👤</span> Manage Profile</a>
+    </div>
+    <div class="sidebar-footer">
+      <button (click)="onLogout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <main class="content">
+    <header class="top-bar">
+      <div class="welcome-msg">
+        <h2>Welcome back, <span class="neon-text">{{userName}}</span></h2>
+        <p>Your digital vault is secured.</p>
+      </div>
+    </header>
+
+    <div class="stats-grid" *ngIf="stats; else loader">
+      <div class="stat-card cyan">
+        <div class="stat-header"><h3>Total Passwords</h3><span class="stat-icon">📂</span></div>
+        <p class="count">{{stats.totalPasswords}}</p>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-header"><h3>Weak Passwords</h3><span class="stat-icon">⚠️</span></div>
+        <p class="count">{{stats.weakPasswords}}</p>
+      </div>
+      <div class="stat-card indigo">
+        <div class="stat-header"><h3>Favorites</h3><span class="stat-icon">⭐</span></div>
+        <p class="count">{{stats.favoritePasswords}}</p>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-header"><h3>Reused</h3><span class="stat-icon">🔄</span></div>
+        <p class="count">{{stats.reusedPasswords}}</p>
+      </div>
+    </div>
+
+    <section class="recent-section" *ngIf="stats">
+      <h3 class="section-header">Recently Added Credentials</h3>
+      <div class="recent-list">
+        <div class="recent-item" *ngFor="let item of stats?.recentPasswords">
+          <div class="item-info">
+  <span class="item-title">{{item.title}}</span>
+  <span class="item-cat">{{item.categoryName}}</span>
+</div>
+          <div class="item-side-info">
+            <span class="item-date">{{item.createdAt | date:'mediumDate'}}</span>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <ng-template #loader>
+      <div class="loader-container">
+        <div class="spinner"></div>
+        <p>Syncing with secure server...</p>
+      </div>
+    </ng-template>
+  </main>
+</div>

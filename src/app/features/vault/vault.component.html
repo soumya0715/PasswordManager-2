@@ -1,0 +1,161 @@
+<div class="dashboard-wrapper">
+  <nav class="sidebar">
+    <div class="nav-logo"><span class="shield-icon">🛡️</span> REV<span class="vault-text">VAULT</span></div>
+    <div class="nav-links">
+      <a routerLink="/dashboard" routerLinkActive="active"><span class="icon">📊</span> Dashboard</a>
+      <a routerLink="/vault" routerLinkActive="active"><span class="icon">🔑</span> Access Vault</a>
+      <a routerLink="/audit" routerLinkActive="active"><span class="icon">🛡️</span> Security Audit</a>
+      <a routerLink="/profile" routerLinkActive="active"><span class="icon">👤</span> Manage Profile</a>
+    </div>
+    <div class="sidebar-footer">
+      <button (click)="onLogout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <main class="content">
+    <header class="top-bar">
+      <div class="welcome-msg">
+        <h2 class="neon-text">My Vault</h2>
+        <p>Hello {{userName}}, your digital vault is encrypted.</p>
+      </div>
+      <div class="header-btns">
+        <button (click)="openAddModal()" class="btn-primary">+ Add Password</button>
+        <button (click)="exportVault()" class="btn-secondary">📤 Backup Vault</button>
+      </div>
+    </header>
+
+    <div class="controls-container">
+      <div class="search-box">
+        <input type="text" [(ngModel)]="searchKeyword" (input)="onFilterChange()" 
+               placeholder="Search by name, website, or username..." class="search-input">
+      </div>
+      
+      <div class="filter-group">
+        <select [(ngModel)]="selectedCategory" (change)="onFilterChange()" class="control-select">
+          <option value="All">All Categories</option>
+          <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+        </select>
+
+        <select [(ngModel)]="sortBy" (change)="applyAllFiltersAndSort()" class="control-select">
+          <option value="newest">Recently Added</option>
+          <option value="name">Name (A-Z)</option>
+        </select>
+
+        <button class="btn-fav-filter" [class.active]="showFavoritesOnly" 
+                (click)="showFavoritesOnly = !showFavoritesOnly; applyAllFiltersAndSort()">
+          {{ showFavoritesOnly ? '⭐ Favorites' : '☆ Show Favorites' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="vault-grid">
+      <div class="password-card" *ngFor="let p of passwords">
+        <div class="card-header">
+          <span class="category-badge">{{p.categoryName}}</span>
+          <button (click)="toggleFavorite(p.id)" class="fav-star" [class.active]="p.isFavorite">
+            {{p.isFavorite ? '⭐' : '☆'}}
+          </button>
+        </div>
+
+        <div class="card-main">
+          <div class="site-info">
+            <h3 (click)="editPassword(p)" class="clickable-title">{{p.title}}</h3>
+            <a [href]="p.url" target="_blank" class="site-link">{{p.url}}</a>
+          </div>
+        </div>
+
+        <div class="card-details">
+          <div class="detail-row"><span class="label">Username:</span><span class="value">{{p.username}}</span></div>
+          <div class="detail-row"><span class="label">Created:</span><span class="value">{{p.createdAt | date:'mediumDate'}}</span></div>
+          <div class="detail-row" *ngIf="p.notes"><span class="label">Notes:</span><span class="value notes-truncate" [title]="p.notes">{{p.notes}}</span></div>
+        </div>
+
+        <div class="card-footer">
+          <button (click)="openViewModal(p)" class="action-btn view" title="Unlock & View">👁️</button>
+          <button (click)="deletePassword(p.id)" class="action-btn delete" title="Delete">🗑️</button>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="passwords.length === 0" class="empty-state">
+      <div class="empty-icon">📂</div>
+      <p>No passwords found.</p>
+    </div>
+
+    <div class="modal-overlay" *ngIf="showAddModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3><span class="shield-icon">🛡️</span> {{ isEditMode ? 'Edit Credential' : 'Add New Credential' }}</h3>
+          <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Account Title</label>
+              <input type="text" [(ngModel)]="newPassword.title" placeholder="e.g. Instagram">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select [(ngModel)]="newPassword.categoryId" class="custom-select">
+                <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Username</label><input type="text" [(ngModel)]="newPassword.username"></div>
+            <div class="form-group"><label>Email Address</label><input type="email" [(ngModel)]="newPassword.email"></div>
+            <div class="form-group full-width">
+              <label>Password</label>
+              <div class="input-wrapper">
+                <input type="text" [(ngModel)]="newPassword.password" placeholder="Enter or Generate">
+                <button (click)="autoGenerate()" class="gen-btn">⚡ Generate</button>
+              </div>
+            </div>
+            <div class="form-group full-width"><label>Website URL</label><input type="text" [(ngModel)]="newPassword.url"></div>
+            <div class="form-group full-width"><label>Notes</label><textarea [(ngModel)]="newPassword.notes" class="control-textarea"></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+          <button class="btn-save" (click)="savePassword()">Save Password</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="showDeleteModal">
+      <div class="modal-card mini delete-modal">
+        <div class="modal-header">
+          <h3 class="text-danger">Confirm Delete</h3>
+          <button class="close-btn" (click)="closeDeleteModal()">×</button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="warning-icon">⚠️</div>
+          <p>Are you sure you want to delete this password? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+          <button class="btn-delete-confirm" (click)="confirmDelete()">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="showMasterPassModal">
+      <div class="modal-card mini">
+        <div class="modal-header">
+          <h3>Authorize Access</h3>
+          <button class="close-btn" (click)="showMasterPassModal = false">×</button>
+        </div>
+        <div class="modal-body auth-body">
+          <p>Verify your Master Password to decrypt this item.</p>
+          <input type="password" [(ngModel)]="masterPasswordInput" placeholder="••••••••" class="auth-input" (keyup.enter)="confirmMasterPassword()">
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="showMasterPassModal = false">Cancel</button>
+          <button class="btn-save" (click)="confirmMasterPassword()">Unlock</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container" [class.show]="showToast">
+      <div class="toast-content">{{ toastMsg }}</div>
+    </div>
+  </main>
+</div>

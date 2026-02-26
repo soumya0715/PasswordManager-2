@@ -1,0 +1,82 @@
+<div class="dashboard-wrapper">
+  <nav class="sidebar">
+    <div class="nav-logo">
+      <span class="shield-icon">🛡️</span> REV<span class="vault-text">VAULT</span>
+    </div>
+    <div class="nav-links">
+      <a routerLink="/dashboard" routerLinkActive="active"><span class="icon">📊</span> Dashboard</a>
+      <a routerLink="/vault" routerLinkActive="active"><span class="icon">🔑</span> Access Vault</a>
+      <a routerLink="/audit" routerLinkActive="active"><span class="icon">🛡️</span> Security Audit</a>
+      <a routerLink="/profile" routerLinkActive="active"><span class="icon">👤</span> Manage Profile</a>
+    </div>
+    <div class="sidebar-footer">
+      <button (click)="onLogout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <main class="content">
+    <header class="top-bar">
+      <div class="welcome-msg">
+        <h2 class="neon-text">Security Audit</h2>
+        <p>Hello {{userName}}, let's secure your recovery options.</p>
+      </div>
+    </header>
+
+    <div class="audit-container">
+      <div class="audit-card critical" *ngIf="!questionsExist">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-content">
+          <h3>Recovery Setup Incomplete</h3>
+          <p>You haven't set up security questions. Setup recovery now to prevent data loss.</p>
+          <button class="btn-primary" (click)="startSetup()">+ Setup Questions Now</button>
+        </div>
+      </div>
+
+      <div class="audit-card healthy" *ngIf="questionsExist">
+        <div class="alert-icon">🛡️</div>
+        <div class="alert-content">
+          <h3>Vault Recovery Active</h3>
+          <p>Your account is secured with {{questionsCount}} recovery questions.</p>
+          <button class="btn-secondary" (click)="openEditModal()">Update Recovery Questions</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="showModal">
+      <div class="modal-card wide">
+        <div class="modal-header">
+          <div>
+            <h3>{{ isEditMode ? 'Update' : 'Configure' }} Security Questions</h3>
+            <p class="subtitle">Provide answers for 3 questions to secure your vault.</p>
+          </div>
+          <button class="close-btn" (click)="showModal = false">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="question-row" *ngFor="let q of selectedQuestions; let i = index">
+            <div class="form-group">
+              <label>Security Question {{i + 1}}</label>
+              <select [(ngModel)]="q.question" class="control-select">
+                <option value="" disabled>Select a question...</option>
+                <option *ngFor="let opt of predefinedQuestions" [value]="opt">{{opt}}</option>
+              </select>
+              <input type="password" [(ngModel)]="q.answer" placeholder="Enter secret answer" class="control-input">
+            </div>
+          </div>
+
+          <div class="form-group master-pass-section" *ngIf="isEditMode">
+            <label>Confirm Master Password</label>
+            <input type="password" [(ngModel)]="masterPassword" placeholder="Enter master password to authorize" class="control-input">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="showModal = false">Cancel</button>
+          <button class="btn-save" (click)="handleSave()" [disabled]="!isFormValid()">
+            {{ isEditMode ? 'Update Security' : 'Enable Recovery' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

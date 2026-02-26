@@ -1,0 +1,58 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>RevPassword Manager</h2>
+      <p>Create your secure vault</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-row" style="display: flex; gap: 10px;">
+        <div class="input-group">
+          <label>First Name</label>
+          <input formControlName="firstName" type="text" placeholder="John">
+        </div>
+        <div class="input-group">
+          <label>Last Name</label>
+          <input formControlName="lastName" type="text" placeholder="Doe">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Email Address</label>
+        <input formControlName="email" type="email" placeholder="name@company.com">
+      </div>
+
+      <div class="input-group">
+        <label>Phone Number (10 Digits)</label>
+        <input formControlName="phone" type="text" placeholder="9876543210">
+      </div>
+
+      <div class="input-group">
+        <label>Master Password (Min 7 chars)</label>
+        <input formControlName="password" type="password" placeholder="••••••••">
+      </div>
+
+      <div class="security-section">
+        <div class="section-header">
+          <h4>Security Questions (Optional, but min 3 if adding)</h4>
+          <button type="button" (click)="addQuestion()" class="btn-add">+ Add Question</button>
+        </div>
+
+        <div formArrayName="securityQuestions">
+          <div *ngFor="let q of questions.controls; let i=index" [formGroupName]="i" class="question-box">
+            <input formControlName="question" placeholder="Security Question {{i+1}}">
+            <input formControlName="answer" type="password" placeholder="Your Answer">
+            <button type="button" (click)="removeQuestion(i)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" 
+        [disabled]="registerForm.invalid || (questions.length > 0 && questions.length < 3)">
+        {{ loading ? 'Processing...' : 'Register Now' }}
+      </button>
+
+      <p class="auth-footer">Already have an account? <a routerLink="/login">Login</a></p>
+    </form>
+  </div>
+</div>
