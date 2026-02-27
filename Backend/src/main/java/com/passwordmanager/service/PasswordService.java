@@ -24,6 +24,8 @@ public class PasswordService {
 
     private final CategoryRepository categoryRepository;
 
+    private final EncryptionService encryptionService;
+
     public List<PasswordDTO> getAllPasswords(User user) {
         return passwordRepository.findByUserOrderByCreatedAtDesc(user)
                 .stream()
@@ -44,24 +46,24 @@ public class PasswordService {
         return convertToDTO(password);
     }
 
-    public PasswordDTO viewPassword(Long id, User user, String rawPassword) {
-
-        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        Password password = passwordRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new RuntimeException("Password not found"));
-
-        return convertToDTO(password);
-    }
+//    public PasswordDTO viewPassword(Long id, User user, String rawPassword) {
+//
+//        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+//            throw new RuntimeException("Invalid password");
+//        }
+//
+//        Password password = passwordRepository.findByIdAndUser(id, user)
+//                .orElseThrow(() -> new RuntimeException("Password not found"));
+//
+//        return convertToDTO(password);
+//    }
 
     public PasswordDTO createPassword(PasswordDTO dto, User user) {
 
         Password password = new Password();
         password.setTitle(dto.getTitle());
         password.setUsername(dto.getUsername());
-        password.setPassword(dto.getPassword());
+        password.setPassword(encryptionService.encrypt(dto.getPassword()));
         password.setEmail(dto.getEmail());
         password.setUrl(dto.getUrl());
         password.setNotes(dto.getNotes());
@@ -151,5 +153,20 @@ public class PasswordService {
         if (password.matches(".*[0-9].*")) score += 20;
         if (password.matches(".*[!@#$%^&*].*")) score += 30;
         return Math.min(score, 100);
+    }
+    public PasswordDTO viewPassword(Long id, User user, String rawPassword) {
+
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        Password password = passwordRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Password not found"));
+
+        PasswordDTO dto = convertToDTO(password);
+
+        dto.setPassword(encryptionService.decrypt(password.getPassword()));
+
+        return dto;
     }
 }

@@ -5,11 +5,14 @@ import com.passwordmanager.entity.VerificationCode;
 import com.passwordmanager.repository.VerificationCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VerificationCodeService {
 
     private final VerificationCodeRepository verificationCodeRepository;
